@@ -1,30 +1,92 @@
 #include "pgconnection.h"
 
-PGConnection* createPGConnection() 
-{
-    PGConnection* connection = (PGConnection*)malloc(sizeof(PGConnection));
-    if (connection == NULL) {
-        return NULL;
-    }
-    
-    connection->m_connection = PQsetdbLogin(connection->m_dbhost, 
-                                            itoa(connection->m_dbport, connection->m_portStr, 10),
-                                            NULL, NULL, 
-                                            connection->m_dbname, 
-                                            connection->m_dbuser, 
-                                            connection->m_dbpass);
+const char conninfo[] = "hostaddr=127.0.0.1 port=5432 dbname=pin2206_perfume_shop user=mpi password=123a1"; //не помню нихуя
 
-    if (PQstatus( connection->m_connection ) != CONNECTION_OK && PQsetnonblocking(connection->m_connection, 1) != 0 )
-    {
-       fprintf(stderr, "Error: %s\n", PQerrorMessage( connection->m_connection ));
-       free(connection);
-       return NULL;
+void printQueryResult(QueryResult* queryRes) {
+    // Выводим заголовок таблицы с именами столбцов
+    printf(" ");
+    for (int j = 0; j < queryRes->nfields; j++) {
+        printf("%-15s ", queryRes->column_names[j]);
     }
-    
-    return connection;
+    printf("\n");
+
+    // Выводим разделительную строку между заголовком и данными
+    for (int j = 0; j < queryRes->nfields; j++) {
+        printf("--------------- ");
+    }
+    printf("\n");
+
+    // Выводим данные
+    for (int i = 0; i < queryRes->ntuples; i++) {
+        for (int j = 0; j < queryRes->nfields; j++) {
+            printf("%-15s ", queryRes->values[i][j]);
+        }
+        printf("\n");
+    }
 }
 
-PGconn* getPGConnection(PGConnection* connection)
-{
-    return connection->m_connection;
+QueryResult* parse_pgresult(PGresult* res) {
+    QueryResult* result = malloc(sizeof(QueryResult));
+    result->ntuples = PQntuples(res);
+    result->nfields = PQnfields(res);
+
+    result->values = malloc(result->ntuples * sizeof(char*));
+    result->column_names = malloc(result->nfields * sizeof(char*));
+
+    for (int i = 0; i < result->ntuples; i++) {
+        result->values[i] = malloc(result->nfields * sizeof(char*));
+        for (int j = 0; j < result->nfields; j++) {
+            result->values[i][j] = PQgetvalue(res, i, j);
+            result->column_names[j] = PQfname(res, j);
+        }
+    }
+
+    return result;
+}
+
+PGresult* begin(PGconn* conn) {
+    PGresult* res = PQexec(conn, "BEGIN TRANSACTION");
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        fprintf(stderr, "BEGIN command failed: %s", PQerrorMessage(conn));
+        PQclear(res);
+        exit(1);
+    }
+    return res;
+}
+
+PGresult* commit(PGconn* conn) {
+    return PQexec(conn, "COMMIT");
+}
+
+PGresult* rollback(PGconn* conn) {
+    return PQexec(conn, "ROLLBACK TRANSACTION");
+}
+
+PGconn* createConnection() {
+    PGconn* conn = PQconnectdb(conninfo);
+    if (PQstatus(conn) != CONNECTION_OK) {
+        fprintf(stderr, "Connection to database failed: %s", PQerrorMessage(conn));
+        PQfinish(conn);
+        exit(1);
+    }
+    return conn;
+}
+
+QueryResult* queryExec(PGconn* conn, char* query) {
+    PGresult* res = PQexec(conn, query);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        fprintf(stderr, "FETCH ALL failed: %s", PQerrorMessage(conn));
+        PQclear(res);
+        exit(1);
+    }
+    return parse_pgresult(res);
+}
+
+QueryResult* makeQuery(char* query) {
+    PGconn* conn = createConnection();
+    PGresult* res = begin(conn);
+    QueryResult* queryRes = queryExec(conn, query);
+    res = commit(conn);
+
+    return queryRes;
 }

@@ -1,22 +1,20 @@
 #ifndef PGCONNECTION_H
 #define PGCONNECTION_H
 
-#include <memory.h>
-#include <mutex.h>
+#include <stdio.h>
 #include <libpq-fe.h>
+#include <malloc.h>
+#include <stdlib.h>
 
-typedef struct PGConnection
-{
-    char* dbhost;
-    int dbport;
-    char* dbname;
-    char* dbuser;
-    char* dbpass;
-    PGconn* connection;
-} PGConnection;
+typedef struct {
+    int ntuples; // number of tuples
+    int nfields; // number of fields
+    char*** values; // 8D array of field values
+    char** column_names; // Array of column names
+} QueryResult;
 
-PGConnection* PGConnection_create();
-PGconn* PGConnection_connection(const PGConnection* pgConn);
-void PGConnection_destroy(PGConnection* pgConn);
+QueryResult* makeQuery(char* query);
+
+void printQueryResult(QueryResult *queryRes);
 
 #endif //PGCONNECTION_H

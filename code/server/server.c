@@ -1,11 +1,14 @@
 #include <stdlib.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <arpa/inet.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <string.h>
 #include "erproc.h"
+#include "httpd.h"
+#include "pg.h"
 
 int main() {
     int server = Socket(AF_INET, SOCK_STREAM, 0);
