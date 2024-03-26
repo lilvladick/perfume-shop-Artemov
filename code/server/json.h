@@ -2,7 +2,7 @@
 #define JSON_H
 
 #include "pgconnection.h"
-#include <cJSON.h>
+#include <cjson/cJSON.h>
 
 cJSON* queryResultToJSON(QueryResult* result);
 

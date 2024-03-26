@@ -2,12 +2,20 @@
 
 void handle_post(int fd, char *  body) {
     cJSON *  parsedBody = cJSON_Parse(body);
-    cJSON *  query = cJSON_GetObjectItemCaseSensitive(parsedBody, "query");
-    QueryResult  * result;
-    cJSON  * jsonResponse;
+    if (!parsedBody) {
+        handle_not_found(fd); // Отправка 404, если парсинг JSON не удался
+        return;
+    }
 
-    result = makeQuery(query->valuestring);
-    jsonResponse = queryResultToJSON(result);
+    cJSON *  query = cJSON_GetObjectItemCaseSensitive(parsedBody, "query");
+    if (!query || !query->valuestring) {
+        handle_not_found(fd); // Отправка 404, если запрос не найден
+        cJSON_Delete(parsedBody);
+        return;
+    }
+
+    QueryResult  * result = makeQuery(query->valuestring);
+    cJSON  * jsonResponse = queryResultToJSON(result);
 
     // Отправка HTTP-заголовков
     const char  * headers = "HTTP/1.1 200 OK\r\n"
@@ -20,6 +28,9 @@ void handle_post(int fd, char *  body) {
     const char  * buf = jsonString;
 
     write(fd, buf, respSize);
+
+    cJSON_Delete(parsedBody);
+    cJSON_Delete(jsonResponse); 
 }
 
 void handle_not_found(int fd) {

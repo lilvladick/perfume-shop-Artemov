@@ -1,6 +1,6 @@
 #include "pgconnection.h"
 
-const char conninfo[] = "hostaddr=127.0.0.1 port=5432 dbname=pin2206_perfume_shop user=mpi password=123a1"; //не помню нихуя
+const char conninfo[] = "hostaddr=82.179.140.18 port=5432 dbname=p2206_perfume_shop user=mpi password=135a1";
 
 void printQueryResult(QueryResult* queryRes) {
     // Выводим заголовок таблицы с именами столбцов

@@ -1,45 +1,56 @@
 #include "json.h"
 
 cJSON* queryResultToJSON(QueryResult* result) {
-    if (!result) {
-        return NULL;
+  if (result == NULL) {
+    return NULL;
+  }
+
+  cJSON* root = cJSON_CreateObject();
+  if (root == NULL) {
+    goto cleanup;
+  }
+
+  // Добавляем количество строк (ntuples) и количество полей (nfields) в объект JSON
+  cJSON_AddNumberToObjectUnsafe(root, "ntuples", result->ntuples);
+  cJSON_AddNumberToObjectUnsafe(root, "nfields", result->nfields);
+
+  // Создаем массив объектов, каждый из которых представляет собой строку результата
+  cJSON* rows = cJSON_AddArrayToObject(root, "rows");
+  if (rows == NULL) {
+    goto cleanup;
+  }
+
+  // Проходим по каждой строке и добавляем ее в массив rows
+  for (int i = 0; i < result->ntuples; ++i) {
+    if (result->values[i] == NULL) {
+      goto cleanup;
     }
 
-    cJSON* root = cJSON_CreateObject();
-    if (!root) {
-        return NULL;
+    cJSON* row = cJSON_CreateObject();
+    if (row == NULL) {
+      goto cleanup;
     }
 
-    // Добавляем количество строк (ntuples) и количество полей (nfields) в объект JSON
-    cJSON_AddNumberToObject(root, "ntuples", result->ntuples);
-    cJSON_AddNumberToObject(root, "nfields", result->nfields);
+    // Проходим по каждому полю строки и добавляем его в массив row
+    for (int j = 0; j < result->nfields; ++j) {
+      if (result->column_names[j] == NULL) {
+        goto cleanup;
+      }
 
-    // Создаем массив объектов, каждый из которых представляет собой строку результата
-    cJSON* rows = cJSON_AddArrayToObject(root, "rows");
-    if (!rows) {
-        cJSON_Delete(root);
-        return NULL;
+      cJSON* field = cJSON_CreateString(result->values[i][j]);
+      if (field == NULL) {
+        goto cleanup;
+      }
+
+      cJSON_AddItemToObject(row, result->column_names[j], field);
     }
 
-    // Проходим по каждой строке и добавляем ее в массив rows
-    for (int i = 0; i < result->ntuples; ++i) {
-        cJSON* row = cJSON_CreateObject();
-        if (!row) {
-            cJSON_Delete(root);
-            return NULL;
-        }
+    cJSON_AddItemToArray(rows, row);
+  }
 
-        // Проходим по каждому полю строки и добавляем его в массив row
-        for (int j = 0; j < result->nfields; ++j) {
-            cJSON* field = cJSON_CreateString(result->values[i][j]);
-            if (!field) {
-                cJSON_Delete(root);
-                return NULL;
-            }
-            cJSON_AddItemToObject(row, result->column_names[j], field);
-        }
-        cJSON_AddItemToArray(rows, row);
-    }
+  return root;
 
-    return root;
+cleanup:
+  cJSON_Delete(root);
+  return NULL;
 }
