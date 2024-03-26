@@ -7,8 +7,8 @@
 #include <errno.h>
 #include <string.h>
 #include "erproc.h"
-#include "httpd.h"
-#include "pg.h"
+#include "http.h"
+#include "pgconnection.h"
 
 static int _stopFlag = 0;
 const static int _listenCount = 5;
