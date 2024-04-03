@@ -6,7 +6,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setSelectTableButton()
-        //makeRequest()
+        makeRequest()
     
     }
     
@@ -16,14 +16,27 @@ class ViewController: UIViewController {
     }
 
     //MARK: functions
-//    func makeRequest() {
-//        let parameters = "{\n    \"query\": \"SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');\"\n}"
-//        guard let postData = parameters.data(using: .utf8) else { return }
-//        let networkManager = NetworkManager()
-//        
-//        networkManager.getData(postData: postData)
-//        
-//    }
+    func makeRequest() {
+        let networkManager = NetworkManager()
+
+        // Пример параметров для POST запроса
+        let parameters: [String: Any] = [
+            "query": "SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');"
+        ]
+
+        networkManager.sendPostRequest(urlString: "http://82.179.140.18:44667/get_data", parameters: parameters) { (data, error) in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            
+            if let data = data {
+                // Обработка полученных данных
+                print("Response Data: \(data)")
+            }
+        }
+        
+    }
     
     func setSelectTableButton() {
         let optionClose = {(action: UIAction) in
