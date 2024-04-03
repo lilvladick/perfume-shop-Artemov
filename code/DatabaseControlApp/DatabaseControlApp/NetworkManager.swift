@@ -42,11 +42,11 @@ struct ResponseData<T: Codable>: Codable {
     let rows: [T]
 }
 
-class Parser {
-    func parseData(data: Data) -> ResponseData<String>? {
+class Parser<T: Codable> {
+    func parseData(data: Data) -> ResponseData<T>? {
         do {
             let decoder = JSONDecoder()
-            let responseData = try decoder.decode(ResponseData<String>.self, from: data)
+            let responseData = try decoder.decode(ResponseData<T>.self, from: data)
             return responseData
         } catch {
             print("Ошибка при парсинге данных: \(error)")
