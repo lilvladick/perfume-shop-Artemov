@@ -33,10 +33,15 @@ class ViewController: UIViewController {
             if let data = data {
                 // Обработка полученных данных
                 print("Response Data: \(data)")
+                
+                // Декодирование JSON-данных
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("Response JSON: \(jsonString)")
+                }
             }
         }
-        
     }
+
     
     func setSelectTableButton() {
         let optionClose = {(action: UIAction) in

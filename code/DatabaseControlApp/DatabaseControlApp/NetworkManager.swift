@@ -8,6 +8,9 @@ class NetworkManager {
             return
         }
         
+        print("Sending POST request to: \(urlString)")
+        print("Parameters: \(parameters)")
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         
@@ -33,24 +36,5 @@ class NetworkManager {
         }
         
         task.resume()
-    }
-}
-
-struct ResponseData<T: Codable>: Codable {
-    let ntuples: Int
-    let nfields: Int
-    let rows: [T]
-}
-
-class Parser<T: Codable> {
-    func parseData(data: Data) -> ResponseData<T>? {
-        do {
-            let decoder = JSONDecoder()
-            let responseData = try decoder.decode(ResponseData<T>.self, from: data)
-            return responseData
-        } catch {
-            print("Ошибка при парсинге данных: \(error)")
-            return nil
-        }
     }
 }
