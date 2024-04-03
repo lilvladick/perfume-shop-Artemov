@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  DatabaseControlApp
-//
-//  Created by Владислав Кириллов on 02.04.2024.
-//
-
 import UIKit
 
 class ViewController: UIViewController {
@@ -13,7 +6,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setSelectTableButton()
-        // Do any additional setup after loading the view.
+        //makeRequest()
+    
     }
     
     //MARK: actions
@@ -22,6 +16,15 @@ class ViewController: UIViewController {
     }
 
     //MARK: functions
+//    func makeRequest() {
+//        let parameters = "{\n    \"query\": \"SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');\"\n}"
+//        guard let postData = parameters.data(using: .utf8) else { return }
+//        let networkManager = NetworkManager()
+//        
+//        networkManager.getData(postData: postData)
+//        
+//    }
+    
     func setSelectTableButton() {
         let optionClose = {(action: UIAction) in
             print(action.title)

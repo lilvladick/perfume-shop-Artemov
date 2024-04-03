@@ -1,9 +1,3 @@
-//
-//  SceneDelegate.swift
-//  DatabaseControlApp
-//
-//  Created by Владислав Кириллов on 02.04.2024.
-//
 
 import UIKit
 
