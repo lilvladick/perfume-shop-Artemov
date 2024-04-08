@@ -49,7 +49,7 @@ PGresult* begin(PGconn* conn) {
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
         fprintf(stderr, "BEGIN command failed: %s", PQerrorMessage(conn));
         PQclear(res);
-        exit(1);
+        return NULL;
     }
     return res;
 }
@@ -67,7 +67,7 @@ PGconn* createConnection() {
     if (PQstatus(conn) != CONNECTION_OK) {
         fprintf(stderr, "Connection to database failed: %s", PQerrorMessage(conn));
         PQfinish(conn);
-        exit(1);
+        return NULL;
     }
     return conn;
 }
@@ -77,7 +77,7 @@ QueryResult* queryExec(PGconn* conn, char* query) {
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         fprintf(stderr, "FETCH ALL failed: %s", PQerrorMessage(conn));
         PQclear(res);
-        exit(1);
+        return NULL;
     }
     return parse_pgresult(res);
 }

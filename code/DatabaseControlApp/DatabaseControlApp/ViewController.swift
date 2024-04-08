@@ -5,7 +5,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setSelectTableButton()
+        //get selecttable button names and check server status
         makeRequest()
     
     }
@@ -19,22 +19,24 @@ class ViewController: UIViewController {
     func makeRequest() {
         let networkManager = NetworkManager()
 
-        // Пример параметров для POST запроса
         let parameters: [String: Any] = [
             "query": "SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');"
         ]
 
-        networkManager.sendPostRequest(urlString: "http://82.179.140.18:44667/get_data", parameters: parameters) { (data, error) in
+        networkManager.sendPostRequest(urlString: "http://82.179.140.18:44668/get_data", parameters: parameters) { [self] (data, error) in
             if let error = error {
                 print("Error: \(error)")
                 return
             }
             
             if let data = data {
-                // Обработка полученных данных
                 print("Response Data: \(data)")
                 
-                // Декодирование JSON-данных
+                // update UI in main flow
+                DispatchQueue.main.async {
+                                self.setSelectTableButton(jsonData: data)
+                            }
+                
                 if let jsonString = String(data: data, encoding: .utf8) {
                     print("Response JSON: \(jsonString)")
                 }
@@ -43,23 +45,52 @@ class ViewController: UIViewController {
     }
 
     
-    func setSelectTableButton() {
-        let optionClose = {(action: UIAction) in
-            print(action.title)
-        }
-        
-        if let selectTableButton = selectTableButton {
-            selectTableButton.menu = UIMenu(children:[
-                UIAction(title: "tab1", state: .on, handler: optionClose),
-                UIAction(title: "tab2", handler: optionClose),
-                UIAction(title: "tab3", handler: optionClose)
-            ])
-            selectTableButton.showsMenuAsPrimaryAction = true
-            selectTableButton.changesSelectionAsPrimaryAction = true
-        } else {
-            print("selectTableButton is nil")
+    func setSelectTableButton(jsonData: Data) {
+        do {
+            // json parsing
+            if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+               let rows = json["rows"] as? [[String: Any]] {
+                
+                var tableNames: [String] = []
+                
+                // getting tables names
+                for row in rows {
+                    if let tableName = row["table_name"] as? String {
+                        tableNames.append(tableName)
+                    }
+                }
+                
+                if let selectTableButton = selectTableButton {
+                    // actions for button
+                    var actions: [UIAction] = []
+                    
+                    for tableName in tableNames {
+                        let action = UIAction(title: tableName, handler: { _ in
+                            print("Selected table: \(tableName)")
+                            // call print table method
+                            self.handleTableSelection(tableName: tableName)
+                        })
+                        actions.append(action)
+                    }
+                    
+                    selectTableButton.menu = UIMenu(children: actions)
+                    selectTableButton.showsMenuAsPrimaryAction = true
+                    selectTableButton.changesSelectionAsPrimaryAction = true
+                } else {
+                    print("selectTableButton is nil")
+                }
+            } else {
+                print("Failed to parse JSON")
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
         }
     }
+
+    func handleTableSelection(tableName: String) {
+        // print table code
+    }
+
     
     
 }
