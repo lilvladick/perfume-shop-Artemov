@@ -13,6 +13,7 @@
 		5E1F4E802BBC03BD000644D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E1F4E7E2BBC03BD000644D1 /* Main.storyboard */; };
 		5E1F4E822BBC03C0000644D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E1F4E812BBC03C0000644D1 /* Assets.xcassets */; };
 		5E1F4E852BBC03C0000644D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E1F4E832BBC03C0000644D1 /* LaunchScreen.storyboard */; };
+		5E3E20C42BC56D3F00B9028E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3E20C32BC56D3F00B9028E /* Models.swift */; };
 		5E8EFA502BBC46190092AF39 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8EFA4F2BBC46180092AF39 /* warning.png */; };
 		5EBBF5732BBD269300DAD8F8 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBBF5722BBD269300DAD8F8 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
@@ -26,6 +27,7 @@
 		5E1F4E812BBC03C0000644D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E1F4E842BBC03C0000644D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5E1F4E862BBC03C0000644D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E3E20C32BC56D3F00B9028E /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		5E8EFA4F2BBC46180092AF39 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning.png; path = images/warning.png; sourceTree = SOURCE_ROOT; };
 		5EBBF5722BBD269300DAD8F8 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +71,7 @@
 				5E1F4E832BBC03C0000644D1 /* LaunchScreen.storyboard */,
 				5E1F4E862BBC03C0000644D1 /* Info.plist */,
 				5E8EFA4F2BBC46180092AF39 /* warning.png */,
+				5E3E20C32BC56D3F00B9028E /* Models.swift */,
 			);
 			path = DatabaseControlApp;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				5E1F4E7D2BBC03BD000644D1 /* ViewController.swift in Sources */,
 				5E1F4E792BBC03BD000644D1 /* AppDelegate.swift in Sources */,
 				5E1F4E7B2BBC03BD000644D1 /* SceneDelegate.swift in Sources */,
+				5E3E20C42BC56D3F00B9028E /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
