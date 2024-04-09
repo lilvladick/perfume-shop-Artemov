@@ -1,7 +1,9 @@
 import UIKit
 
+
 class ViewController: UIViewController {
     @IBOutlet weak var selectTableButton: UIButton!
+    var bottlesResponse: BottlesResponse?
     
     override func viewDidLoad() {
         super.viewDidLoad()
