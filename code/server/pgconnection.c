@@ -3,20 +3,17 @@
 const char conninfo[] = "hostaddr=82.179.140.18 port=5432 dbname=p2206_perfume_shop user=mpi password=135a1";
 
 void printQueryResult(QueryResult* queryRes) {
-    // Выводим заголовок таблицы с именами столбцов
     printf(" ");
     for (int j = 0; j < queryRes->nfields; j++) {
         printf("%-15s ", queryRes->column_names[j]);
     }
     printf("\n");
 
-    // Выводим разделительную строку между заголовком и данными
     for (int j = 0; j < queryRes->nfields; j++) {
         printf("--------------- ");
     }
     printf("\n");
 
-    // Выводим данные
     for (int i = 0; i < queryRes->ntuples; i++) {
         for (int j = 0; j < queryRes->nfields; j++) {
             printf("%-15s ", queryRes->values[i][j]);
@@ -77,6 +74,7 @@ QueryResult* queryExec(PGconn* conn, char* query) {
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         fprintf(stderr, "FETCH ALL failed: %s", PQerrorMessage(conn));
         PQclear(res);
+        PQfinish(conn); // Закрываем соединение при ошибке
         return NULL;
     }
     return parse_pgresult(res);
@@ -84,9 +82,25 @@ QueryResult* queryExec(PGconn* conn, char* query) {
 
 QueryResult* makeQuery(char* query) {
     PGconn* conn = createConnection();
+    if (!conn) 
+        return NULL;
+
     PGresult* res = begin(conn);
+    if (!res) {
+        PQfinish(conn);
+        return NULL;
+    }
+
     QueryResult* queryRes = queryExec(conn, query);
+    if (!queryRes) { 
+        rollback(conn);
+        PQfinish(conn);
+        return NULL;
+    }
+
     res = commit(conn);
+    PQfinish(conn); 
 
     return queryRes;
 }
+
