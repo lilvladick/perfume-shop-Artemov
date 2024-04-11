@@ -25,12 +25,21 @@ extension ViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BottleCell", for: indexPath)
+        
+        // Создание конфигурации содержимого ячейки
+        var content = cell.defaultContentConfiguration()
+        
         guard let bottle = bottlesResponse?.rows[indexPath.row] else {
             return cell
         }
-        // Настройка ячейки с данными бутылки
-        cell.textLabel?.text = bottle.bottle_name
-        cell.detailTextLabel?.text = "Volume: \(bottle.volume), Material: \(bottle.material)"
+        
+        // Настройка конфигурации содержимого
+        content.text = bottle.bottle_name
+        content.secondaryText = "Volume: \(bottle.volume), Material: \(bottle.material)"
+        
+        // Применение конфигурации к ячейке
+        cell.contentConfiguration = content
+        
         return cell
     }
 }
