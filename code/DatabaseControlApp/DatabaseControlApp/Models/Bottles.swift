@@ -2,12 +2,12 @@ import UIKit
 
 // Структура для представления каждой строки в JSON
 struct BottleData: Codable {
-    let bottleID: String
-    let bottleName: String
+    let bottle_id: String
+    let bottle_name: String
     let volume: String
     let material: String
-    let updatedAt: String
-    let createdAt: String
+    let updated_at: String
+    let created_at: String
 }
 
 // Структура для всего JSON
@@ -29,9 +29,8 @@ extension ViewController: UITableViewDataSource {
             return cell
         }
         // Настройка ячейки с данными бутылки
-        cell.textLabel?.text = bottle.bottleName
+        cell.textLabel?.text = bottle.bottle_name
         cell.detailTextLabel?.text = "Volume: \(bottle.volume), Material: \(bottle.material)"
         return cell
     }
 }
-

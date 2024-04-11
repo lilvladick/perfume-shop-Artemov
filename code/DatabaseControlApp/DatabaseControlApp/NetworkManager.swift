@@ -8,9 +8,6 @@ class NetworkManager {
             return
         }
         
-        print("Sending POST request to: \(urlString)")
-        print("Parameters: \(parameters)")
-        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         
