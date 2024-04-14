@@ -35,6 +35,7 @@
 		5E3E20ED2BC5731700B9028E /* Salary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3E20EC2BC5731700B9028E /* Salary.swift */; };
 		5E8EFA502BBC46190092AF39 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8EFA4F2BBC46180092AF39 /* warning.png */; };
 		5EBBF5732BBD269300DAD8F8 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBBF5722BBD269300DAD8F8 /* NetworkManager.swift */; };
+		5EF840632BCBFC3400AF272B /* ViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF840622BCBFC3400AF272B /* ViewControllerExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		5E3E20EC2BC5731700B9028E /* Salary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Salary.swift; sourceTree = "<group>"; };
 		5E8EFA4F2BBC46180092AF39 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning.png; path = images/warning.png; sourceTree = SOURCE_ROOT; };
 		5EBBF5722BBD269300DAD8F8 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		5EF840622BCBFC3400AF272B /* ViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				5E1F4E832BBC03C0000644D1 /* LaunchScreen.storyboard */,
 				5E1F4E862BBC03C0000644D1 /* Info.plist */,
 				5E8EFA4F2BBC46180092AF39 /* warning.png */,
+				5EF840622BCBFC3400AF272B /* ViewControllerExtension.swift */,
 			);
 			path = DatabaseControlApp;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				5EBBF5732BBD269300DAD8F8 /* NetworkManager.swift in Sources */,
 				5E3E20E12BC5729700B9028E /* Supplier.swift in Sources */,
 				5E3E20E32BC572B700B9028E /* Supply.swift in Sources */,
+				5EF840632BCBFC3400AF272B /* ViewControllerExtension.swift in Sources */,
 				5E3E20D72BC5722A00B9028E /* Composition.swift in Sources */,
 				5E3E20CD2BC5718900B9028E /* Categories.swift in Sources */,
 				5E3E20D12BC571CE00B9028E /* Ingredient.swift in Sources */,

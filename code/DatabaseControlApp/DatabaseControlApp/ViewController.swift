@@ -1,11 +1,12 @@
+import Foundation
 import UIKit
-
 
 class ViewController: UIViewController {
     @IBOutlet weak var selectTableButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
-    var bottlesResponse: BottlesResponse?
+    
     private var url = "http://82.179.140.18:44800/get_data"
+    private var selectedTableName: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -13,15 +14,15 @@ class ViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "BottleCell")
         //get selecttable button names and check server status
         //makeRequest()
-        getdata()
     }
     
     //MARK: actions
     @IBAction func GoExit(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func selectTableButtonTapped(_ sender: Any) {
-        getdata()
+        //makeRequest()
     }
     
     //MARK: functions
@@ -43,8 +44,8 @@ class ViewController: UIViewController {
                 
                 // update UI in main flow
                 DispatchQueue.main.async {
-                                self.setSelectTableButton(jsonData: data)
-                            }
+                    self.setSelectTableButton(jsonData: data)
+                }
                 
                 if let jsonString = String(data: data, encoding: .utf8) {
                     print("Response JSON: \(jsonString)")
@@ -52,12 +53,50 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    func setSelectTableButton(jsonData: Data) {
+        do {
+            // json parsing
+            if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+               let rows = json["rows"] as? [[String: Any]] {
+                
+                var tableNames: [String] = []
+                
+                // getting tables names
+                for row in rows {
+                    if let tableName = row["table_name"] as? String {
+                        tableNames.append(tableName)
+                    }
+                }
+                
+                // actions for button
+                var actions: [UIAction] = []
+                
+                for tableName in tableNames {
+                    let action = UIAction(title: tableName, handler: { _ in
+                        print("Selected table: \(tableName)")
+                        self.selectedTableName = tableName
+                        self.getdata(tableName: tableName)
+                    })
+                    actions.append(action)
+                }
+                
+                selectTableButton.menu = UIMenu(children: actions)
+                selectTableButton.showsMenuAsPrimaryAction = true
+                selectTableButton.changesSelectionAsPrimaryAction = true
+            } else {
+                print("Failed to parse JSON")
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
+        }
+    }
 
-    func getdata() {
+    func getdata(tableName: String) {
         let networkManager = NetworkManager()
 
         let parameters: [String: Any] = [
-            "query": "SELECT * FROM bottles"
+            "query": "SELECT * FROM \(tableName)"
         ]
 
         networkManager.sendPostRequest(urlString: url, parameters: parameters) { [self] (data, error) in
@@ -90,56 +129,4 @@ class ViewController: UIViewController {
             }
         }
     }
-
-    
-    func setSelectTableButton(jsonData: Data) {
-        do {
-            // json parsing
-            if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-               let rows = json["rows"] as? [[String: Any]] {
-                
-                var tableNames: [String] = []
-                
-                // getting tables names
-                for row in rows {
-                    if let tableName = row["table_name"] as? String {
-                        tableNames.append(tableName)
-                    }
-                }
-                
-                if let selectTableButton = selectTableButton {
-                    // actions for button
-                    var actions: [UIAction] = []
-                    
-                    for tableName in tableNames {
-                        let action = UIAction(title: tableName, handler: { _ in
-                            print("Selected table: \(tableName)")
-                            // call print table method
-                            self.handleTableSelection(tableName: tableName)
-                        })
-                        actions.append(action)
-                    }
-                    
-                    selectTableButton.menu = UIMenu(children: actions)
-                    selectTableButton.showsMenuAsPrimaryAction = true
-                    selectTableButton.changesSelectionAsPrimaryAction = true
-                } else {
-                    print("selectTableButton is nil")
-                }
-            } else {
-                print("Failed to parse JSON")
-            }
-        } catch {
-            print("Error parsing JSON: \(error)")
-        }
-    }
-
-    func handleTableSelection(tableName: String) {
-        // print table code
-    }
-
-    
-    
 }
-
-
