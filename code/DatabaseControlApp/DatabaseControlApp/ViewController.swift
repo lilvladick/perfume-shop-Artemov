@@ -4,6 +4,7 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var selectTableButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    var dataSource: (any DataSourceProtocol)?
     
     private var url = "http://82.179.140.18:44800/get_data"
     private var selectedTableName: String?
@@ -11,9 +12,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "BottleCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SelectedTableView")
         //get selecttable button names and check server status
-        //makeRequest()
+        makeRequest()
     }
     
     //MARK: actions
@@ -40,93 +41,84 @@ class ViewController: UIViewController {
             }
             
             if let data = data {
-                print("Response Data: \(data)")
-                
-                // update UI in main flow
                 DispatchQueue.main.async {
                     self.setSelectTableButton(jsonData: data)
-                }
-                
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Response JSON: \(jsonString)")
                 }
             }
         }
     }
     
     func setSelectTableButton(jsonData: Data) {
-        do {
-            // json parsing
-            if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-               let rows = json["rows"] as? [[String: Any]] {
-                
-                var tableNames: [String] = []
-                
-                // getting tables names
-                for row in rows {
-                    if let tableName = row["table_name"] as? String {
-                        tableNames.append(tableName)
-                    }
-                }
-                
-                // actions for button
-                var actions: [UIAction] = []
-                
-                for tableName in tableNames {
-                    let action = UIAction(title: tableName, handler: { _ in
-                        print("Selected table: \(tableName)")
-                        self.selectedTableName = tableName
-                        self.getdata(tableName: tableName)
-                    })
-                    actions.append(action)
-                }
-                
-                selectTableButton.menu = UIMenu(children: actions)
-                selectTableButton.showsMenuAsPrimaryAction = true
-                selectTableButton.changesSelectionAsPrimaryAction = true
-            } else {
-                print("Failed to parse JSON")
-            }
-        } catch {
-            print("Error parsing JSON: \(error)")
-        }
-    }
-
-    func getdata(tableName: String) {
-        let networkManager = NetworkManager()
-
-        let parameters: [String: Any] = [
-            "query": "SELECT * FROM \(tableName)"
-        ]
-
-        networkManager.sendPostRequest(urlString: url, parameters: parameters) { [self] (data, error) in
-            if let error = error {
-                print("Error: \(error)")
-                return
-            }
-            
-            if let data = data {
-                print("Response Data: \(data)")
-                
-                // Parse data and update bottlesResponse
-                do {
-                    let decoder = JSONDecoder()
-                    let bottlesResponse = try decoder.decode(BottlesResponse.self, from: data)
-                    self.bottlesResponse = bottlesResponse
+            do {
+                // json parsing
+                if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+                   let rows = json["rows"] as? [[String: Any]] {
                     
-                    // Update UI in main thread
-                    DispatchQueue.main.async {
-                        // Reload table data
-                        self.tableView.reloadData()
+                    var tableNames: [String] = []
+                    
+                    // getting tables names
+                    for row in rows {
+                        if let tableName = row["table_name"] as? String {
+                            tableNames.append(tableName)
+                        }
                     }
-                } catch {
-                    print("Error decoding JSON: \(error)")
+                    
+                    // actions for button
+                    var actions: [UIAction] = []
+                    
+                    for tableName in tableNames {
+                        let action = UIAction(title: tableName, handler: { [weak self] _ in
+                            print("Selected table: \(tableName)")
+                            self?.selectedTableName = tableName
+                            self?.getData(tableName: tableName)
+                        })
+                        actions.append(action)
+                    }
+                    
+                    selectTableButton.menu = UIMenu(children: actions)
+                    selectTableButton.showsMenuAsPrimaryAction = true
+                    selectTableButton.changesSelectionAsPrimaryAction = true
+                } else {
+                    print("Failed to parse JSON")
+                }
+            } catch {
+                print("Error parsing JSON: \(error)")
+            }
+        }
+
+    func getData(tableName: String) {
+            let networkManager = NetworkManager()
+
+            let parameters: [String: Any] = [
+                "query": "SELECT * FROM \(tableName)"
+            ]
+
+            networkManager.sendPostRequest(urlString: url, parameters: parameters) { [weak self] (data, error) in
+                if let error = error {
+                    print("Error: \(error)")
+                    return
                 }
                 
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Response JSON: \(jsonString)")
+                if let data = data {
+                    
+                    do {
+                        if tableName == "bottles" {
+                            let decoder = JSONDecoder()
+                            let bottlesResponse = try decoder.decode(BottlesResponse.self, from: data)
+                            self?.dataSource = bottlesResponse
+                        } else if tableName == "locations" {
+                            let decoder = JSONDecoder()
+                            let locationsResponse = try decoder.decode(LocationsResponse.self, from: data)
+                            self?.dataSource = locationsResponse
+                        }
+                        
+                        DispatchQueue.main.async {
+                            self?.tableView.reloadData()
+                        }
+                    } catch {
+                        print("Error decoding JSON: \(error)")
+                    }
                 }
             }
         }
-    }
 }
