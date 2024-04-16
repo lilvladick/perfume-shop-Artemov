@@ -79,91 +79,31 @@ class ViewController: UIViewController {
         }
 
     func getData(tableName: String) {
-            let networkManager = NetworkManager()
+        let networkManager = NetworkManager()
 
-            let parameters: [String: Any] = [
-                "query": "SELECT * FROM \(tableName)"
-            ]
+        let parameters: [String: Any] = [
+            "query": "SELECT * FROM \(tableName)"
+        ]
 
-            networkManager.sendPostRequest(urlString: url, parameters: parameters) { [weak self] (data, error) in
-                if let error = error {
-                    print("Error: \(error)")
-                    return
-                }
-                
-                if let data = data {
-                    
-                    do {
-                        let decoder = JSONDecoder()
-                        if tableName == "bottles" {
-                            let bottlesResponse = try decoder.decode(BottlesResponse.self, from: data)
-                            self?.dataSource = bottlesResponse
-                        } else if tableName == "locations" {
-                            let locationsResponse = try decoder.decode(LocationsResponse.self, from: data)
-                            self?.dataSource = locationsResponse
-                        } else if tableName == "composition" {
-                            let compositionResponse = try decoder.decode(CompositionResponse.self, from: data)
-                            self?.dataSource = compositionResponse
-                        } else if tableName == "ingredient" {
-                            let ingredientResponse = try decoder.decode(IngredientResponse.self, from: data)
-                            self?.dataSource = ingredientResponse
-                        } else if tableName == "customer" {
-                            let customerResponse = try decoder.decode(CustomerResponse.self, from: data)
-                            self?.dataSource = customerResponse
-                        } else if tableName == "orders" {
-                            let ordersResponse = try decoder.decode(OrdersResponse.self, from: data)
-                            self?.dataSource = ordersResponse
-                        } else if tableName == "payment" {
-                            let paymentResponse = try decoder.decode(PaymentResponse.self, from: data)
-                            self?.dataSource = paymentResponse
-                        } else if tableName == "delivery" {
-                            let deliveryResponse = try decoder.decode(DeliveryResponse.self, from: data)
-                            self?.dataSource = deliveryResponse
-                        } else if tableName == "review" {
-                            let reviewResponse = try decoder.decode(ReviewResponse.self, from: data)
-                            self?.dataSource = reviewResponse
-                        } else if tableName == "supplier" {
-                            let supplierResponse = try decoder.decode(SupplierResponse.self, from: data)
-                            self?.dataSource = supplierResponse
-                        } else if tableName == "supply" {
-                            let supplyResponse = try decoder.decode(SupplyResponse.self, from: data)
-                            self?.dataSource = supplyResponse
-                        } else if tableName == "promotionparticipation" {
-                            let promotionparticipationResponse = try decoder.decode(PromotionParticipationResponse.self, from: data)
-                            self?.dataSource = promotionparticipationResponse
-                        } else if tableName == "promotion" {
-                            let promotionResponse = try decoder.decode(PromotionResponse.self, from: data)
-                            self?.dataSource = promotionResponse
-                        } else if tableName == "shelf" {
-                            let shelfResponse = try decoder.decode(ShelfResponse.self, from: data)
-                            self?.dataSource = shelfResponse
-                        } else if tableName == "employee" {
-                            let employeeResponse = try decoder.decode(EmployeeResponse.self, from: data)
-                            self?.dataSource = employeeResponse
-                        } else if tableName == "salary" {
-                            let salaryResponse = try decoder.decode(SalaryResponse.self, from: data)
-                            self?.dataSource = salaryResponse
-                        } else if tableName == "brands" {
-                            let brandsResponse = try decoder.decode(BrandsResponse.self, from: data)
-                            self?.dataSource = brandsResponse
-                        } else if tableName == "perfume" {
-                            let perfumeResponse = try decoder.decode(PerfumeResponse.self, from: data)
-                            self?.dataSource = perfumeResponse
-                        } else if tableName == "categories" {
-                            let categoriesResponse = try decoder.decode(CategoriesResponse.self, from: data)
-                            self?.dataSource = categoriesResponse
-                        } else if tableName == "store" {
-                            let storeResponse = try decoder.decode(StoreResponse.self, from: data)
-                            self?.dataSource = storeResponse
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self?.tableView.reloadData()
-                        }
-                    } catch {
-                        print("Error decoding JSON: \(error)")
+        networkManager.sendPostRequest(urlString: url, parameters: parameters) { [weak self] (data, error) in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+
+            if let data = data, let responseType = responseTypes[tableName] {
+                do {
+                    let decoder = JSONDecoder()
+                    let response = try decoder.decode(responseType, from: data)
+                    self?.dataSource = response as? any DataSourceProtocol
+
+                    DispatchQueue.main.async {
+                        self?.tableView.reloadData()
                     }
+                } catch {
+                    print("Error decoding JSON: \(error)")
                 }
             }
         }
+    }
 }
