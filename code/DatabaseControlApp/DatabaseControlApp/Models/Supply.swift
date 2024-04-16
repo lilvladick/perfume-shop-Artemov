@@ -2,7 +2,7 @@ import UIKit
 
 struct SupplyData: Codable {
     let supply_id: String
-    let supplier_name: String
+    let supplier_id: String
     let perfume_id: String
     let quantity: String
     let supply_date: String

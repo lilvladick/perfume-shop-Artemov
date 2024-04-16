@@ -1,7 +1,7 @@
 import UIKit
 
 struct PromotionParticipationData: Codable {
-    let participation_idd: String
+    let participation_id: String
     let perfume_id: String
     let promotion_id: String
     let updated_at: String

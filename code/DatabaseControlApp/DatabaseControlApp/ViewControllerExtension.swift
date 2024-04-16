@@ -9,19 +9,13 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectedTableView", for: indexPath)
         
-        var content = cell.defaultContentConfiguration()
-        
-        guard let item = dataSource?.rows[indexPath.row] else {
+        guard let item = dataSource?.rows[indexPath.row] as? Displayable else {
             return cell
         }
         
-        if let bottle = item as? BottleData {
-            content.text = bottle.bottle_name
-            content.secondaryText = "Volume: \(bottle.volume), Material: \(bottle.material)"
-        } else if let location = item as? LocationsData {
-            content.text = location.location_name
-            content.secondaryText = "u win"
-        }
+        var content = cell.defaultContentConfiguration()
+        content.text = item.primaryText
+        content.secondaryText = item.secondaryText
         
         cell.contentConfiguration = content
         return cell
