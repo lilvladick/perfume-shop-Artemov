@@ -10,5 +10,5 @@ struct IngredientData: Codable {
 struct IngredientResponse: Codable {
     let ntuples: Int
     let nfields: Int
-    let rows: [LocationsData]
+    let rows: [IngredientData]
 }
