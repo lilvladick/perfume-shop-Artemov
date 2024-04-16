@@ -13,17 +13,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SelectedTableView")
-        //get selecttable button names and check server status
         makeRequest()
     }
     
     //MARK: actions
     @IBAction func GoExit(_ sender: Any) {
         dismiss(animated: true, completion: nil)
-    }
-    
-    @IBAction func selectTableButtonTapped(_ sender: Any) {
-        //makeRequest()
     }
     
     //MARK: functions
@@ -50,20 +45,17 @@ class ViewController: UIViewController {
     
     func setSelectTableButton(jsonData: Data) {
             do {
-                // json parsing
                 if let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
                    let rows = json["rows"] as? [[String: Any]] {
                     
                     var tableNames: [String] = []
-                    
-                    // getting tables names
+
                     for row in rows {
                         if let tableName = row["table_name"] as? String {
                             tableNames.append(tableName)
                         }
                     }
                     
-                    // actions for button
                     var actions: [UIAction] = []
                     
                     for tableName in tableNames {
