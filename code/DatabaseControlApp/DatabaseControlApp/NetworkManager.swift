@@ -17,7 +17,6 @@ class NetworkManager {
             completion(nil, error)
             return
         }
-        
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(nil, error)
@@ -28,6 +27,8 @@ class NetworkManager {
                 completion(nil, NSError(domain: "Server Error", code: -1, userInfo: nil))
                 return
             }
+            
+            print("HTTP Response Status code: \(httpResponse.statusCode)")
             
             completion(data, nil)
         }
