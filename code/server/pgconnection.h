@@ -7,14 +7,14 @@
 #include <stdlib.h>
 
 typedef struct {
-    int ntuples; // number of tuples
-    int nfields; // number of fields
-    char*** values; // 8D array of field values
-    char** column_names; // Array of column names
+    int ntuples;
+    int nfields; 
+    char*** values; 
+    char** column_names; 
 } QueryResult;
 
 QueryResult* makeQuery(char* query);
 
 void printQueryResult(QueryResult *queryRes);
 
-#endif //PGCONNECTION_H
+#endif 

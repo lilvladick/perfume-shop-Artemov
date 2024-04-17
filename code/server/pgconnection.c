@@ -74,7 +74,7 @@ QueryResult* queryExec(PGconn* conn, char* query) {
     if (PQresultStatus(res) == PGRES_FATAL_ERROR) {
         fprintf(stderr, "FATAL ERROR failed: %s", PQerrorMessage(conn));
         PQclear(res);
-        PQfinish(conn); // Закрываем соединение при ошибке
+        PQfinish(conn);
         return NULL;
     }
     return parse_pgresult(res);

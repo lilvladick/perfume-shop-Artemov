@@ -6,7 +6,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var dataSource: (any DataSourceProtocol)?
     
-    private var url = "http://82.179.140.18:44800/get_data"
+    private var url = "http://82.179.140.18:44801/get_data"
     private var selectedTableName: String?
     
     override func viewDidLoad() {
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
             "query": "SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');"
         ]
 
-        networkManager.sendPostRequest(urlString: url, parameters: parameters) { [self] (data, error) in
+        networkManager.sendGetRequest(urlString: url, parameters: parameters) { [self] (data, error) in
             if let error = error {
                 print("Error: \(error)") // не ворк с инета кафедры
                 return
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
             "query": "SELECT * FROM \(tableName)"
         ]
 
-        networkManager.sendPostRequest(urlString: url, parameters: parameters) { [weak self] (data, error) in
+        networkManager.sendGetRequest(urlString: url, parameters: parameters) { [weak self] (data, error) in
             if let error = error {
                 print("Error: \(error)")
                 return

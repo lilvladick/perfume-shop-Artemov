@@ -49,15 +49,12 @@ int main(int argc, char** argv) {
                 printf("End of file occurred\n");
             }
             buf[nRead] = '\0';
-
-            // Парсим HTTP-запрос, извлекаем метод и URL
             char method[5];
             char url[128];
             sscanf(buf, "%4s %127s", method, url);
             char* body = strstr(buf, "\r\n\r\n");
 
-            // Простой роутер для метода GET
-            if (strncmp(method, "POST", 4) == 0 && body != NULL) {
+            if (strncmp(method, "GET", 4) == 0 && body != NULL) {
                 body += 4;
                 if (strncmp(url, "/get_data", 9) == 0) {
                     handle_post(fd, body);
@@ -65,7 +62,6 @@ int main(int argc, char** argv) {
                     handle_not_found(fd);
                 }
             } else {
-                // Добавьте обработку других методов или роутов по мере необходимости
                 write(fd, "HTTP/1.1 405 Method Not Allowed\r\n\r\n", 35);
             }
             close(fd);

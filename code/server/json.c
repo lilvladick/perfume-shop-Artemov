@@ -10,17 +10,14 @@ cJSON* queryResultToJSON(QueryResult* result) {
     goto cleanup;
   }
 
-  // Добавляем количество строк (ntuples) и количество полей (nfields) в объект JSON
-  cJSON_AddNumberToObjectUnsafe(root, "ntuples", result->ntuples);
-  cJSON_AddNumberToObjectUnsafe(root, "nfields", result->nfields);
+  cJSON_AddNumberToObject(root, "ntuples", result->ntuples);
+  cJSON_AddNumberToObject(root, "nfields", result->nfields);
 
-  // Создаем массив объектов, каждый из которых представляет собой строку результата
   cJSON* rows = cJSON_AddArrayToObject(root, "rows");
   if (rows == NULL) {
     goto cleanup;
   }
 
-  // Проходим по каждой строке и добавляем ее в массив rows
   for (int i = 0; i < result->ntuples; ++i) {
     if (result->values[i] == NULL) {
       goto cleanup;
@@ -31,7 +28,6 @@ cJSON* queryResultToJSON(QueryResult* result) {
       goto cleanup;
     }
 
-    // Проходим по каждому полю строки и добавляем его в массив row
     for (int j = 0; j < result->nfields; ++j) {
       if (result->column_names[j] == NULL) {
         goto cleanup;
